@@ -26,8 +26,15 @@ app.get('/', (req, res)=>{
     res.send(newsArray)
 });
 
+const validateNews = (newsObj)=> {
+    const schema = {
+        name: Joi.string().min(4).required()
+    }
+    return Joi.validate(newsObj, schema);
+}
+
+//Creation of News
 app.post('/news', (req, res)=>{
-    //Error - Return 400
     const {error} = validateNews(req.body);
     if(error) return res.status(400).send(error.details[0].message)
 
@@ -39,19 +46,19 @@ app.post('/news', (req, res)=>{
     res.send(newsObj);
 });
 
+//Updating News
 app.put('/news/:id',(req, res)=> {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
     if(!newsObj) return res.status(404).send("The news object with given id was not found.")
 
-    //Error - Return 400
     const {error} = validateNews(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
-    //Update News name
     newsObj.name = req.body.name;
     res.send(newsObj);
 })
 
+//Deletion of News using Splice
 app.delete('/news/:id',(req,res)=> {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
     if(!newsObj) return res.status(404).send("The news object with given id was not found.")
@@ -61,15 +68,7 @@ app.delete('/news/:id',(req,res)=> {
     res.send(newsObj);
 })
 
-//Evironment variable
 const port = process.env.PORT || 3000;
 app.listen(port, ()=>{
     console.log(`Listen on port ${port}....`)
 })
-
-const validateNews = (newsObj)=> {
-    const schema = {
-        name: Joi.string().min(4).required()
-    }
-    return Joi.validate(newsObj, schema);
-}
