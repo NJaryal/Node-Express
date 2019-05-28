@@ -9,6 +9,7 @@ const ordersRoutes = require('./api/routes/orders')
 app.use((req,res,next) =>{
     res.header('Access-Control-Allow-Origin','*');
     res.header('Access-Control-Allow-Headers','Origin, Content-Type, Accept, Authorization')
+    next();
 })
 
 //Routes to handle Request
