@@ -5,6 +5,13 @@ app.use(express.json());
 const newsRoutes = require('./api/routes/news');
 const ordersRoutes = require('./api/routes/orders')
 
+//CORS Handling
+app.use((req,res,next) =>{
+    res.header('Access-Control-Allow-Origin','*');
+    res.header('Access-Control-Allow-Headers','Origin, Content-Type, Accept, Authorization')
+})
+
+//Routes to handle Request
 app.use('/news', newsRoutes)
 app.use('/orders', ordersRoutes)
 
