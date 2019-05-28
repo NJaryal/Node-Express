@@ -21,6 +21,11 @@ const newsArray = [
     }
 ];
 
+const errorGenerator = (text, status)=> {
+    const error = new Error(text)
+    error.status = status
+    return error
+}
 
 const validateNews = (newsObj)=> {
     const schema = {
@@ -37,7 +42,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
-    if(!newsObj) return res.status(404).send("The news object with given id was not found.")
+    if(!newsObj) { throw errorGenerator('The news id was not found', 400)}
     res.status(200).json({
         message: 'Single News!',
         newsId: req.params.id,
@@ -61,9 +66,9 @@ router.post('/', (req, res, next) => {
 
 router.put('/:id', (req,res,next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
-    if(!newsObj) return res.status(404).send("The news object with given id was not found.")
+    if(!newsObj) { throw errorGenerator('The news id was not found', 404)}
     const {error} = validateNews(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) { throw errorGenerator('The news id was not found', 400)}
     newsObj.name = req.body.name;
     res.status(200).json({
         message: 'Successfully updated a News!',
@@ -73,7 +78,7 @@ router.put('/:id', (req,res,next) => {
 
 router.delete('/:id', (req, res, next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
-    if(!newsObj) return res.status(404).send("The news object with given id was not found.")
+    if(!newsObj) { throw errorGenerator('The news id was not found', 404)}
     const index = newsArray.indexOf(newsObj);
     newsArray.splice(index, 1);
     res.status(200).json({
