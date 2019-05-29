@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi');
 const express = require('express');
 const router = express.Router();
-
 const newsArray = [
     {
         id: 1,
@@ -37,7 +36,7 @@ const validateNews = (newsObj)=> {
 router.get('/', (req, res, next) => {
     res.status(200).json({
         newsArrayJSON: newsArray
-    })
+    })    
 });
 
 router.get('/:id', (req, res, next) => {
