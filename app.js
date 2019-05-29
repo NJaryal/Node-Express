@@ -12,6 +12,16 @@ app.use((req,res,next) =>{
     next();
 })
 
+//Logger to capture Api Endpoint, method and Timestamp
+app.use((req,res,next) => {
+    if((res.status(201)) || (res.status(200))){
+        logger.info(`Api EndPoint:${req.originalUrl}, Api Method: ${req.method}`, new Date())
+    } else {
+        logger.warn(`Error ${error.status} ` ,new Error(error.message));
+    }        
+    next();
+})
+
 //Routes to handle Request
 app.use('/news', newsRoutes)
 
@@ -28,15 +38,6 @@ app.use((error,req,res,next)=> {
             message: error.message
         }
     }) 
-})
-//Logger to capture Api Endpoint, method and Timestamp
-app.use((req,res,next) => {
-    if((res.status(201)) || (res.status(200))){
-        logger.info(`Api EndPoint:${req.originalUrl}, Api Method: ${req.method}`, new Date())
-    } else {
-        logger.warn(`Error ${error.status} ` ,new Error(error.message));
-    }        
-    next();
 })
 
 module.exports = app;
