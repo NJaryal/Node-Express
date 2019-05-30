@@ -20,10 +20,11 @@ const newsArray = [
     }
 ];
 
-const errorGenerator = (text, status)=> {
-    const error = new Error(text)
-    error.status = status
-    return error
+class CustomError extends Error{
+    constructor(text, status){
+        super(text)
+        this.status = status
+    }
 }
 
 const validateNews = (newsObj)=> {
@@ -41,7 +42,9 @@ router.get('/', (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
-    if(!newsObj) { throw errorGenerator('The news id was not found', 400)}
+    if(!newsObj) { 
+        throw new CustomError('The news id was not found', 400)
+    }
     res.status(200).json({
         message: 'Single News!',
         newsId: req.params.id,
@@ -50,8 +53,10 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    const {error} = validateNews(req.body);
-    if(error) return res.status(400).send(error.details[0].message)
+    const {error} = validateNews(req.body);    
+    if(error) {
+        throw new CustomError('Not Found', 400)
+    }
     const newsObj = {
         id: newsArray.length + 1,
         name: req.body.name
@@ -65,9 +70,13 @@ router.post('/', (req, res, next) => {
 
 router.put('/:id', (req,res,next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
-    if(!newsObj) { throw errorGenerator('The news id was not found', 404)}
+    if(!newsObj) { 
+        throw new CustomError('The news id was not found', 404)
+    }
     const {error} = validateNews(req.body);
-    if(error) { throw errorGenerator('The news id was not found', 400)}
+    if(error) {
+        throw new CustomError('Bad Request error', 400)
+    }
     newsObj.name = req.body.name;
     res.status(200).json({
         message: 'Successfully updated a News!',
@@ -77,7 +86,9 @@ router.put('/:id', (req,res,next) => {
 
 router.delete('/:id', (req, res, next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
-    if(!newsObj) { throw errorGenerator('The news id was not found', 404)}
+    if(!newsObj) { 
+        throw new CustomError('The news id was not found', 404)
+    }
     const index = newsArray.indexOf(newsObj);
     newsArray.splice(index, 1);
     res.status(200).json({
