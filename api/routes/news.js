@@ -1,6 +1,8 @@
-const Joi = require('@hapi/joi');
 const express = require('express');
-const router = express.Router();
+const app = express();
+app.use(express.json());
+const CustomError = require('../../Interfaces/error-handler/error')
+const validateNews = require('../../Interfaces/validators/validate')
 const newsArray = [
     {
         id: 1,
@@ -20,27 +22,13 @@ const newsArray = [
     }
 ];
 
-class CustomError extends Error{
-    constructor(text, status){
-        super(text)
-        this.status = status
-    }
-}
-
-const validateNews = (newsObj)=> {
-    const schema = {
-        name: Joi.string().min(4).required()
-    }
-    return Joi.validate(newsObj, schema);
-}
-
-router.get('/', (req, res, next) => {
+app.get('/news', (req, res, next) => {
     res.status(200).json({
         newsArrayJSON: newsArray
     })    
 });
 
-router.get('/:id', (req, res, next) => {
+app.get('/news/:id', (req, res, next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
     if(!newsObj) { 
         throw new CustomError('The news id was not found', 400)
@@ -52,7 +40,7 @@ router.get('/:id', (req, res, next) => {
     })
 });
 
-router.post('/', (req, res, next) => {
+app.post('/news', (req, res, next) => {
     const {error} = validateNews(req.body);    
     if(error) {
         throw new CustomError('Not Found', 400)
@@ -68,7 +56,7 @@ router.post('/', (req, res, next) => {
     })
 });
 
-router.put('/:id', (req,res,next) => {
+app.put('/news/:id', (req,res,next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
     if(!newsObj) { 
         throw new CustomError('The news id was not found', 404)
@@ -84,7 +72,7 @@ router.put('/:id', (req,res,next) => {
     })
 })
 
-router.delete('/:id', (req, res, next) => {
+app.delete('/news/:id', (req, res, next) => {
     const newsObj = newsArray.find(item => item.id === parseInt(req.params.id))
     if(!newsObj) { 
         throw new CustomError('The news id was not found', 404)
@@ -96,6 +84,5 @@ router.delete('/:id', (req, res, next) => {
         deletedObj: newsObj
     });
 });
-
-module.exports = router;
+module.exports = app;
 

@@ -1,9 +1,6 @@
 const express = require('express');
-const app = express();
+const app = require('./api/routes/news')
 const logger = require('./utils/loggers')
-app.use(express.json());
-
-const newsRoutes = require('./api/routes/news');
 
 //CORS Handling
 app.use((req,res,next) =>{
@@ -14,20 +11,18 @@ app.use((req,res,next) =>{
 
 //Logger to capture Api Endpoint, method and Timestamp
 app.use((req,res,next) => {    
-    if((!res.status(200)) || (!res.status(201))){
+    if((res.status(200)) || (res.status(201))){
         logger.info(`Api EndPoint:${req.originalUrl}, Api Method: ${req.method}`, new Date())
     }
     next();
 })
-
-//Routes to handle Request
-app.use('/news', newsRoutes)
 
 app.use((req,res,next)=> {
     const error = new Error('Not Found!')
     error.status = 404
     next(error)
 })
+
 app.use((error,req,res,next)=> {
     res.status(error.status || 500);
     res.json({
