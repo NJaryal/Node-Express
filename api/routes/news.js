@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 app.use(express.json());
-const CustomError = require('../../error-handler/error')
+const CustomError = require('../../error-handler/index')
 const validateNews = require('../../validators/validate')
 const newsArray = [
     {
