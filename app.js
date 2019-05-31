@@ -15,10 +15,8 @@ app.use((req,res,next) =>{
 //Logger to capture Api Endpoint, method and Timestamp
 app.use((req,res,next) => {    
     if((!res.status(200)) || (!res.status(201))){
-        logger.warn(`Error ${error.status} ` ,new Error(error.message));        
-    } else {
         logger.info(`Api EndPoint:${req.originalUrl}, Api Method: ${req.method}`, new Date())
-    }        
+    }
     next();
 })
 
@@ -37,7 +35,8 @@ app.use((error,req,res,next)=> {
             status: error.status,
             message: error.message
         }
-    }) 
+    })
+    logger.warn(`Error ${error.status} ` ,new Error(error.message));  
 })
 
 module.exports = app;
